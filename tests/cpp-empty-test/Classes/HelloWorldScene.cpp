@@ -73,6 +73,10 @@ bool HelloWorld::init()
     // add the sprite as a child to this layer
     this->addChild(sprite);
     
+    auto program = GLProgram::createWithFilenames("Shader/Shake.vsh", "Shader/Shake.fsh");
+    auto programState = GLProgramState::getOrCreateWithGLProgram(program);
+    sprite->setGLProgramState(programState);
+    
     return true;
 }
 
