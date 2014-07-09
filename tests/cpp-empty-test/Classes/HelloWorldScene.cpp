@@ -73,7 +73,25 @@ bool HelloWorld::init()
     // add the sprite as a child to this layer
     this->addChild(sprite);
     
+    // render texture snapshot
+    auto snapItem = MenuItemFont::create("Snap", CC_CALLBACK_1(HelloWorld::onSnap, this));
+    auto snapMenu = Menu::create(snapItem, nullptr);
+    this->addChild(snapMenu);
+    snapMenu->setPosition(Vec2(visibleSize.width/2, visibleSize.height/4));
+    
     return true;
+}
+
+void HelloWorld::onSnap(Ref*)
+{
+    CCLOG("HelloWorld::onSnap()");
+    auto size = Director::getInstance()->getWinSize();
+    auto rt = RenderTexture::create(size.width, size.height);
+    rt->setVirtualViewport(Vec2::ZERO, Rect(0, 0, size.width, size.height), Rect(0, 0, 512, 512));
+    rt->beginWithClear(0.0f, 0.0f, 0.0f, 1.0f);
+    Director::getInstance()->getRunningScene()->visit();
+    rt->end();
+    rt->saveToFile("render-texture-snapshot.jpg");
 }
 
 void HelloWorld::menuCloseCallback(Ref* sender)

@@ -15,6 +15,9 @@ public:
     // a selector callback
     void menuCloseCallback(Ref* sender);
     
+    // Snapshot
+    void onSnap(Ref*);
+    
     // implement the "static node()" method manually
     CREATE_FUNC(HelloWorld);
 };

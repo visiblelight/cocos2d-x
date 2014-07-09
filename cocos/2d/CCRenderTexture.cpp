@@ -465,7 +465,7 @@ Image* RenderTexture::newImage(bool fliimage)
         return nullptr;
     }
 
-    const Size& s = _texture->getContentSizeInPixels();
+    const Size& s = _fullviewPort.size;
 
     // to get the image size to save
     //        if the saving image domain exceeds the buffer texture domain,
