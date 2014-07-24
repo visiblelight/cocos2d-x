@@ -35,6 +35,7 @@
 #include "EffectsAdvancedTest/EffectsAdvancedTest.h"
 #include "InputTest/MouseTest.h"
 #include "PerformanceTest/PerformanceTest.h"
+#include "ProfileTest/ProfileTest.h"
 #include "ZwoptexTest/ZwoptexTest.h"
 #include "CocosDenshionTest/CocosDenshionTest.h"
 #if (CC_TARGET_PLATFORM != CC_PLATFORM_EMSCRIPEN)

@@ -85,6 +85,7 @@ Controller g_aTestNames[] = {
     { "Mouse", []() { return new MouseTestScene(); } },
 	{ "MutiTouch", []() { return new MutiTouchTestScene(); } },
 	{ "Performance tests", []() { return new PerformanceTestScene(); } },
+    { "Profile Tests", []() { return new ProfileTestScene(); } },
     { "Renderer", []() { return new NewRendererTestScene(); } },
     { "ReleasePool", [](){ return new ReleasePoolTestScene(); } },
 	{ "Rotate World", [](){return new RotateWorldTestScene(); } },
