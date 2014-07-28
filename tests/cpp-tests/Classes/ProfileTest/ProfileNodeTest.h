@@ -74,9 +74,12 @@ public:
     CREATE_FUNC(ProfileNodeOperationTest);
     
 protected:
-    void update(float dt) override;
     void recreate() override;
     std::string hint() const override;
+    void doOperations(float);
+    
+protected:
+    Label* _operationTimeLabel;
 };
 
 #endif

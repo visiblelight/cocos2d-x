@@ -915,6 +915,8 @@
 		A07A52BF1783AF210073F6A7 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07A52B91783AE900073F6A7 /* OpenGLES.framework */; };
 		A07A52C01783AF250073F6A7 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07A52B71783AE6D0073F6A7 /* UIKit.framework */; };
 		A07A52C31783B02C0073F6A7 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A07A52C11783B01F0073F6A7 /* AVFoundation.framework */; };
+		A2B7803E1983F1E5001A3E3F /* ProfileParticleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2B7803D1983F1E5001A3E3F /* ProfileParticleTest.cpp */; };
+		A2B7803F1983F3F9001A3E3F /* ProfileParticleTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2B7803D1983F1E5001A3E3F /* ProfileParticleTest.cpp */; };
 		A2CB0EE4197D053200A810F3 /* ProfileTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2CB0EE2197D053200A810F3 /* ProfileTest.cpp */; };
 		A2CB0EE5197D053200A810F3 /* ProfileTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2CB0EE2197D053200A810F3 /* ProfileTest.cpp */; };
 		A2CB0EE8197D0BC000A810F3 /* ProfileSpriteTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2CB0EE7197D0BC000A810F3 /* ProfileSpriteTest.cpp */; };
@@ -3180,6 +3182,8 @@
 		A07A52B91783AE900073F6A7 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/OpenGLES.framework; sourceTree = DEVELOPER_DIR; };
 		A07A52BB1783AEB80073F6A7 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		A07A52C11783B01F0073F6A7 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.1.sdk/System/Library/Frameworks/AVFoundation.framework; sourceTree = DEVELOPER_DIR; };
+		A2B7803A1983F1D2001A3E3F /* ProfileParticleTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProfileParticleTest.h; sourceTree = "<group>"; };
+		A2B7803D1983F1E5001A3E3F /* ProfileParticleTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProfileParticleTest.cpp; sourceTree = "<group>"; };
 		A2CB0EE2197D053200A810F3 /* ProfileTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProfileTest.cpp; sourceTree = "<group>"; };
 		A2CB0EE3197D053200A810F3 /* ProfileTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileTest.h; sourceTree = "<group>"; };
 		A2CB0EE6197D0BA700A810F3 /* ProfileSpriteTest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProfileSpriteTest.h; sourceTree = "<group>"; };
@@ -7378,6 +7382,8 @@
 			isa = PBXGroup;
 			children = (
 				A2CB0EE2197D053200A810F3 /* ProfileTest.cpp */,
+				A2B7803A1983F1D2001A3E3F /* ProfileParticleTest.h */,
+				A2B7803D1983F1E5001A3E3F /* ProfileParticleTest.cpp */,
 				A2CB0EE6197D0BA700A810F3 /* ProfileSpriteTest.h */,
 				A2CB0EEA197E590D00A810F3 /* ProfileNodeTest.h */,
 				A2CB0EE7197D0BC000A810F3 /* ProfileSpriteTest.cpp */,
@@ -8369,6 +8375,7 @@
 				1AC35C1B18CECF0C00F37B72 /* NewEventDispatcherTest.cpp in Sources */,
 				1AC35C2D18CECF0C00F37B72 /* PerformanceNodeChildrenTest.cpp in Sources */,
 				29080DC5191B595E0066F8DF /* UIScene_Editor.cpp in Sources */,
+				A2B7803E1983F1E5001A3E3F /* ProfileParticleTest.cpp in Sources */,
 				1AC35BDD18CECF0C00F37B72 /* acts.cpp in Sources */,
 				1AC35B7518CECF0C00F37B72 /* ArmatureScene.cpp in Sources */,
 				1AC35B8118CECF0C00F37B72 /* SceneController.cpp in Sources */,
@@ -8590,6 +8597,7 @@
 				29080DAE191B595E0066F8DF /* UIImageViewTest.cpp in Sources */,
 				1AC35C1018CECF0C00F37B72 /* LabelTest.cpp in Sources */,
 				59620E901921E5CF002021B6 /* Bug-Child.cpp in Sources */,
+				A2B7803F1983F3F9001A3E3F /* ProfileParticleTest.cpp in Sources */,
 				29080DC8191B595E0066F8DF /* UISceneManager.cpp in Sources */,
 				1AC35C6A18CECF0C00F37B72 /* VisibleRect.cpp in Sources */,
 				1AC35C4018CECF0C00F37B72 /* ReleasePoolTest.cpp in Sources */,

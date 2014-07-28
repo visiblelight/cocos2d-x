@@ -45,7 +45,9 @@ protected:
     
     void setHint() { if (_hintLabel) _hintLabel->setString(hint()); }
     
+    void createTrigger(const std::string& hint, const Vec2& position, Label*& display, ccMenuCallback callback);
     void createTweaker(const std::string& labelText, const Vec2& position, Label*& display, ccMenuCallback cbPrev, ccMenuCallback cbNext);
+    virtual void setupTweakers();
     virtual void recreate() {};
     virtual std::string hint() const { return ""; }
     

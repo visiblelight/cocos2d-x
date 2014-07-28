@@ -2,6 +2,7 @@
 #include "../testResource.h"
 #include "ProfileNodeTest.h"
 #include "ProfileSpriteTest.h"
+#include "ProfileParticleTest.h"
 
 enum
 {
@@ -15,7 +16,8 @@ struct {
 } g_testsName[] =
 {
     { "Profile Node", [](Ref*) { runProfileNodeTest(); } },
-    { "Profile Sprite", [](Ref*sender) { runProfileSpriteTest(); } },
+    { "Profile Sprite", [](Ref*) { runProfileSpriteTest(); } },
+    { "Profile Particle", [](Ref*) { runProfileParticleTest(); }},
 };
 
 static const int g_testMax = sizeof(g_testsName)/sizeof(g_testsName[0]);
@@ -109,6 +111,20 @@ void ProfileMainLayer::onMouseScroll(Event *event)
     _CurrentPos = nextPos;
 }
 
+void ProfileLayer::createTrigger(const std::string& hint, const cocos2d::Vec2& position, cocos2d::Label*& display, ccMenuCallback callback)
+{
+    auto label = Label::createWithTTF(hint, "fonts/arial.ttf", 12);
+    label->setColor(Color3B::YELLOW);
+    auto item = MenuItemLabel::create(label, callback);
+    auto menu = Menu::create(item, nullptr);
+    menu->setPosition(position);
+    addChild(menu);
+    display = Label::createWithTTF("", "fonts/arial.ttf", 12);
+    display->setPosition(position - Vec2(80, 0));
+    display->setColor(Color3B::YELLOW);
+    addChild(display);
+}
+
 void ProfileLayer::createTweaker(const std::string& labelText, const Vec2& position, Label*& display, ccMenuCallback cbPrev, ccMenuCallback cbNext)
 {
     auto label = Label::createWithTTF(labelText, "fonts/arial.ttf", 12);
@@ -137,17 +153,22 @@ void ProfileLayer::onEnter()
 {
     BaseTest::onEnter();
     
-    createTweaker("Quantity", Vec2(40, 260), _quantityLabel,
-               CC_CALLBACK_1(ProfileLayer::onQuantityPrev, this), CC_CALLBACK_1(ProfileLayer::onQuantityNext, this));
-    createTweaker("Positions", Vec2(40, 240), _positionLabel,
-               CC_CALLBACK_1(ProfileLayer::onPositionPrev, this), CC_CALLBACK_1(ProfileLayer::onPositionNext, this));
-    createTweaker("Visibility", Vec2(40, 220), _visibilityLabel,
-               CC_CALLBACK_1(ProfileLayer::onVisibilityPrev, this), CC_CALLBACK_1(ProfileLayer::onVisibilityNext, this));
+    setupTweakers();
     
     _hintLabel = Label::createWithTTF(hint(), "fonts/arial.ttf", 12);
     _hintLabel->setPosition(Director::getInstance()->getWinSize().width / 2, 100);
     _hintLabel->setColor(Color3B::GREEN);
     addChild(_hintLabel);
+}
+
+void ProfileLayer::setupTweakers()
+{
+    createTweaker("Quantity", Vec2(40, 260), _quantityLabel,
+                  CC_CALLBACK_1(ProfileLayer::onQuantityPrev, this), CC_CALLBACK_1(ProfileLayer::onQuantityNext, this));
+    createTweaker("Positions", Vec2(40, 240), _positionLabel,
+                  CC_CALLBACK_1(ProfileLayer::onPositionPrev, this), CC_CALLBACK_1(ProfileLayer::onPositionNext, this));
+    createTweaker("Visibility", Vec2(40, 220), _visibilityLabel,
+                  CC_CALLBACK_1(ProfileLayer::onVisibilityPrev, this), CC_CALLBACK_1(ProfileLayer::onVisibilityNext, this));
 }
 
 void ProfileTestScene::runThisTest()

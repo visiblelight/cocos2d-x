@@ -191,22 +191,6 @@ void ProfileNodeBasicTest::onVisibilityNext(Ref*)
     _visibilityIndex = ++_visibilityIndex % ProfileNodeTestPolicy::VisibilityPolicyCount;
 }
 
-void ProfileNodeOperationTest::update(float dt)
-{
-    // remove children
-    for (int i = 0; i < ProfileNodeTestPolicy::Quantities[_quantityIndex]; ++i)
-    {
-        removeChildByTag(i);
-    }
-    
-    // add children
-    for (int i = 0; i < ProfileNodeTestPolicy::Quantities[_quantityIndex]; ++i)
-    {
-        auto node = Node::create();
-        addChild(node, 0, i);
-    }
-}
-
 void ProfileNodeOperationTest::recreate()
 {
     removeAllChildren();
@@ -278,6 +262,9 @@ void ProfileNodeOperationTest::recreate()
     
     ProfileLayer::onEnter();
     
+    // trigger
+    createTrigger("Find", Vec2(420, 260), _operationTimeLabel, [&](Ref*){ this->scheduleOnce(schedule_selector(ProfileNodeOperationTest::doOperations), 0.05f); });
+    
     // update the displays
     _quantityLabel->setString(StringUtils::format("%d", ProfileNodeTestPolicy::Quantities[_quantityIndex]));
     _positionLabel->setString(ProfileNodeTestPolicy::PositionPolicy[_positionIndex]);
@@ -290,4 +277,49 @@ void ProfileNodeOperationTest::recreate()
 std::string ProfileNodeOperationTest::hint() const
 {
     return "Profile scene graph add/remove children.";
+}
+
+void ProfileNodeOperationTest::doOperations(float)
+{
+    // Stark Family
+    auto p0 = Node::create();
+    p0->setName("eddard-stark");
+    addChild(p0);
+    
+    auto p01 = Node::create();
+    p01->setName("robb-stark");
+    p0->addChild(p01);
+    
+    auto p02 = Node::create();
+    p02->setName("sansa-stark");
+    p0->addChild(p02);
+    
+    auto p03 = Node::create();
+    p03->setName("arya-stark");
+    p0->addChild(p03);
+    
+    auto p04 = Node::create();
+    p04->setName("bran-stark");
+    p0->addChild(p04);
+    
+    auto p05 = Node::create();
+    p05->setName("rickon-stark");
+    p0->addChild(p05);
+    
+    auto p06 = Node::create();
+    p06->setName("jon-snow");
+    p0->addChild(p06);
+    auto p061 = Node::create();
+    p061->setName("ghost");
+    p06->addChild(p061);
+    
+    std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+    
+    // enumerate
+    enumerateChildren("//.*-stark$", [](Node* node)->bool { /*CCLOG("%s: Winter is coming.", node->getName().c_str());*/ return false; });
+    
+    std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    
+    _operationTimeLabel->setString(StringUtils::format("%ld us", static_cast<long>(duration.count())));
 }
