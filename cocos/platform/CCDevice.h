@@ -65,6 +65,15 @@ public:
     static void setAccelerometerInterval(float interval);
 
     static Data getTextureDataForText(const char * text, const FontDefinition& textDefinition, TextAlign align, int &width, int &height, bool& hasPremultipliedAlpha);
+    
+    /**
+     * Get used memory size in bytes. (only available on iOS now.)
+     */
+#if CC_TARGET_PLATFORM == CC_PLATFORM_IOS
+    static unsigned long long getUsedMemory();
+#else
+    static unsigned long long getUsedMemory() { return 0; }
+#endif
 
 private:
     CC_DISALLOW_IMPLICIT_CONSTRUCTORS(Device);

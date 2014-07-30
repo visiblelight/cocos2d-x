@@ -37,6 +37,7 @@
 // Accelerometer
 #import<CoreMotion/CoreMotion.h>
 #import<CoreFoundation/CoreFoundation.h>
+#import<mach/mach.h>
 
 @interface CCAccelerometerDispatcher : NSObject<UIAccelerometerDelegate>
 {
@@ -475,6 +476,20 @@ Data Device::getTextureDataForText(const char * text, const FontDefinition& text
     } while (0);
     
     return ret;
+}
+
+unsigned long long Device::getUsedMemory()
+{
+    struct task_basic_info info;
+    mach_msg_type_number_t size = sizeof(info);
+    kern_return_t kerr = task_info(mach_task_self(), TASK_BASIC_INFO, (task_info_t)&info, &size);
+    if( kerr == KERN_SUCCESS )
+    {
+        return info.resident_size;
+    }
+    
+    CCLOG("Device::getUsedMemory() unsuccessfully.");
+    return 0;
 }
 
 NS_CC_END
