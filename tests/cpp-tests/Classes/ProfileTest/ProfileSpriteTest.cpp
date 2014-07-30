@@ -5,13 +5,13 @@ namespace ProfileSpriteTestPolicy
 {
     // texture size
     const int TextureSizePolicyCount = 5;
-    const std::string TextureSizePolicy[TextureSizePolicyCount] = {"16x16", "32x32", "64x64", "100x100", "misc"};
+    const std::string TextureSizePolicy[TextureSizePolicyCount] = {"16x16", "32x32", "64x64", "100x100", "480x320"};
     std::vector<std::string> image16x16({"ball.png"});
     std::vector<std::string> image32x32({"fire.png", "snow.png", "stars.png", "close.png", "hole_effect.png", "hole_stencil.png"});
     std::vector<std::string> image64x64({"streak.png", "Comet.png", "pattern1.png", "stars2.png"});
     std::vector<std::string> image100x100({"YellowSquare.png", "MagentaSquare.png", "CyanSquare.png", "CyanTriangle.png", "YellowTriangle.png"});
-    std::vector<std::string> imageMisc({"powered.png", "Icon.png", "grossinis_sister1.png", "grossinis_sister2.png", "close.png", "grossini.png", "Pea.png", "SpookyPeas.png", "stone.png", "test_image.jpeg", "blocks9.png"});
-    std::vector<std::vector<std::string>> TextureSizeImage({image16x16, image32x32, image64x64, image100x100, imageMisc});
+    std::vector<std::string> image480x320({"background1.jpg", "background2.jpg", "background1.png", "background2.png", "HelloWorld.png"});
+    std::vector<std::vector<std::string>> TextureSizeImage({image16x16, image32x32, image64x64, image100x100, image480x320});
     
     // texture pixel format
     const int TexturePixelFormatCount = 7;
@@ -21,6 +21,8 @@ namespace ProfileSpriteTestPolicy
     // action status
     const int ActionStatusCount = 2;
     const std::string ActionStatusPolicy[ActionStatusCount] = {"Running", "Stopped"};
+    const int ActionPolicyCount = 4;
+    const std::string ActionPolicy[ActionPolicyCount] = {"Move", "Rotate", "Scale", "Skew"};
     
     // batch
     const int BatchPolicyCount = 3;
@@ -113,7 +115,16 @@ void ProfileSpriteBasicTest::onEnter()
     _textureSizeIndex = 0;
     _texturePixelFormatIndex = 0;
     
+    setupAutoTweakers();
+    
     recreate();
+}
+
+void ProfileSpriteBasicTest::setupAutoTweakers()
+{
+    // auto test
+    createAutoTweaker([&](int index){ _quantityIndex = index; }, 0, ProfileSpriteTestPolicy::QuantityPolicyCount);
+    createAutoTweaker([&](int index){ _textureSizeIndex = index; }, 0, ProfileSpriteTestPolicy::TextureSizePolicyCount);
 }
 
 void ProfileSpriteBasicTest::recreate()
@@ -206,6 +217,12 @@ void ProfileSpriteBasicTest::recreate()
 std::string ProfileSpriteBasicTest::hint() const
 {
     return "Profile render sprite ability.";
+}
+
+std::string ProfileSpriteBasicTest::getDescription() const
+{
+    return StringUtils::format("[Quantity: %d]|[Position: %s]|[Visibility: %s]|[TextureSize: %s]|[PixelFormat:%s]",
+                ProfileSpriteTestPolicy::Quantities[_quantityIndex], ProfileSpriteTestPolicy::PositionPolicy[_positionIndex].c_str(), ProfileSpriteTestPolicy::VisibilityPolicy[_visibilityIndex].c_str(), ProfileSpriteTestPolicy::TextureSizePolicy[_textureSizeIndex].c_str(), ProfileSpriteTestPolicy::TexturePixelFormatPolicy[_texturePixelFormatIndex].c_str());
 }
 
 void ProfileSpriteBasicTest::onQuantityPrev(Ref*)
@@ -359,7 +376,9 @@ void ProfileSpriteActionTest::recreate()
     createTweaker("TextureSize", Vec2(40, 200), _textureSizeLabel,
                   CC_CALLBACK_1(ProfileSpriteBasicTest::onTextureSizePrev, this), CC_CALLBACK_1(ProfileSpriteBasicTest::onTextureSizeNext, this));
     createTweaker("PixelFormat", Vec2(40, 180), _texturePixelFormatLabel, CC_CALLBACK_1(ProfileSpriteBasicTest::onTexturePixelFormatPrev, this), CC_CALLBACK_1(ProfileSpriteBasicTest::onTexturePixelFormatNext, this));
-    createTweaker("Action", Vec2(40, 160), _actionStatusLabel, CC_CALLBACK_1(ProfileSpriteActionTest::onActionStatusPrev, this), CC_CALLBACK_1(ProfileSpriteActionTest::onActionStatusNext, this));
+    
+    createTweaker("Action", Vec2(40, 160), _actionLabel, CC_CALLBACK_1(ProfileSpriteActionTest::onActionPrev, this), CC_CALLBACK_1(ProfileSpriteActionTest::onActionNext, this));
+    createTweaker("ActStatus", Vec2(40, 140), _actionStatusLabel, CC_CALLBACK_1(ProfileSpriteActionTest::onActionStatusPrev, this), CC_CALLBACK_1(ProfileSpriteActionTest::onActionStatusNext, this));
     
     _actionStatusIndex = 0;
     
@@ -369,13 +388,14 @@ void ProfileSpriteActionTest::recreate()
     _visibilityLabel->setString(ProfileSpriteTestPolicy::VisibilityPolicy[_visibilityIndex]);
     _textureSizeLabel->setString(ProfileSpriteTestPolicy::TextureSizePolicy[_textureSizeIndex]);
     _texturePixelFormatLabel->setString(ProfileSpriteTestPolicy::TexturePixelFormatPolicy[_texturePixelFormatIndex]);
+    _actionLabel->setString(ProfileSpriteTestPolicy::ActionPolicy[_actionIndex]);
     _actionStatusLabel->setString(ProfileSpriteTestPolicy::ActionStatusPolicy[_actionStatusIndex]);
     setHint();
 }
 
 Action* ProfileSpriteActionTest::getOneAction() const
 {
-    int choice = randomBetween<int>(0, 3);
+    int choice = _actionIndex;
     Size size = Director::getInstance()->getWinSize();
     float timeDisp = CCRANDOM_0_1();
     float positionDispX = CCRANDOM_0_1();
@@ -408,6 +428,26 @@ Action* ProfileSpriteActionTest::getOneAction() const
     }
     
     return RepeatForever::create(seq);
+}
+
+void ProfileSpriteActionTest::setupAutoTweakers()
+{
+    createAutoTweaker([&](int index){ _quantityIndex = index; }, 0, ProfileSpriteTestPolicy::QuantityPolicyCount - 3);
+    // disable the huge texture size test temporarily!!!!!!!
+    createAutoTweaker([&](int index){ _textureSizeIndex = index; }, 0, ProfileSpriteTestPolicy::TextureSizePolicyCount - 3);
+    createAutoTweaker([&](int index){ _actionIndex = index; }, 0, ProfileSpriteTestPolicy::ActionPolicyCount);
+}
+
+void ProfileSpriteActionTest::onActionPrev(Ref*)
+{
+    _actionIndex = --_actionIndex < 0 ? ProfileSpriteTestPolicy::ActionPolicyCount - 1 : _actionIndex;
+    recreate();
+}
+
+void ProfileSpriteActionTest::onActionNext(Ref*)
+{
+    _actionIndex = ++_actionIndex % ProfileSpriteTestPolicy::ActionPolicyCount;
+    recreate();
 }
 
 void ProfileSpriteActionTest::onActionStatusPrev(Ref*)
@@ -595,4 +635,3 @@ void ProfileSpriteBatchTest::onBatchNext(Ref*)
     _batchIndex = ++_batchIndex % ProfileSpriteTestPolicy::BatchPolicyCount;
     recreate();
 }
-

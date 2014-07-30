@@ -19,7 +19,7 @@ namespace ProfileSpriteTestPolicy
 {
     // basic test
     const int QuantityPolicyCount = 11;
-    const int Quantities[QuantityPolicyCount] = {0, 5, 10, 20, 40, 100, 200, 400, 800, 2000, 50000};
+    const int Quantities[QuantityPolicyCount] = {0, 5, 10, 20, 40, 100, 200, 400, 800, 2000, 5000};
     const int PositionPolicyCount = 3;
     const std::string PositionPolicy[PositionPolicyCount] = {"All inside CCV", "Half inside CCV", "All outside CCV"};
     const int VisibilityPolicyCount = 3;
@@ -45,11 +45,13 @@ class ProfileSpriteBasicTest : public ProfileSpriteTest
 public:
     CREATE_FUNC(ProfileSpriteBasicTest);
     void onEnter() override;
+    std::string getDescription() const override;
     virtual ~ProfileSpriteBasicTest() { Texture2D::setDefaultAlphaPixelFormat(Texture2D::PixelFormat::AUTO); }
     
 protected:
     void recreate() override;
     std::string hint() const override;
+    void setupAutoTweakers() override;
     
 public:
     // not override, might be referred in the derived class
@@ -96,10 +98,16 @@ protected:
     void recreate() override;
     Action* getOneAction() const;
     
+    void onActionPrev(Ref*);
+    void onActionNext(Ref*);
     void onActionStatusPrev(Ref*);
     void onActionStatusNext(Ref*);
     void toggleActionStatus();
     
+    void setupAutoTweakers() override;
+    
+    int _actionIndex;
+    Label* _actionLabel;
     int _actionStatusIndex;
     Label* _actionStatusLabel;
 };

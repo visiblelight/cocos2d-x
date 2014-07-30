@@ -22,6 +22,7 @@ public:
     void onTouchMoved(Touch* touches, Event  *event);
     
     void onMouseScroll(Event *event);
+    
 protected:
     Vec2 _beginPos;
     Menu* _itemMenu;
@@ -29,11 +30,46 @@ protected:
     static Vec2 _CurrentPos;
 };
 
+struct AutoTweaker
+{
+    AutoTweaker(const std::function<void (int)>& f, int mi, int ma):func(f), min(mi), max(ma) {}
+    std::function<void (int)> func;
+    int min;
+    int max;
+};
+
+class FrameProfiler
+{
+    long _totalFrames;
+    long _totalTime;
+    long _maxDuration;
+    long _minDuration;
+    long _averageDuration;
+    
+    std::string _desc;
+    
+public:
+    FrameProfiler():_totalFrames(0), _totalTime(0), _maxDuration(0), _minDuration(std::numeric_limits<long>::max()), _averageDuration(0)
+    {
+    }
+    void reset();
+    void sample(long dt);
+    std::string getResult() const;
+    void setDesc(const std::string& desc) { _desc = desc; }
+    std::string getDesc() const { return _desc; }
+};
+
 class ProfileLayer : public BaseTest
 {
 public:
     CREATE_FUNC(ProfileLayer);
     void onEnter() override;
+    void onExit() override;
+    
+    void doAutoTest();
+    void updateProfiler(float dt);
+    virtual std::string getDescription() const { return "Please describe the specification in the derived class."; };
+    void dumpAutoTest();
     
 protected:
     void onQuantityPrev(Ref* sender) { if (_cbQuantityPrev) { _cbQuantityPrev(sender); recreate(); } }
@@ -43,6 +79,8 @@ protected:
     void onVisibilityPrev(Ref* sender) { if (_cbVisibilityPrev) { _cbVisibilityPrev(sender); recreate(); } }
     void onVisibilityNext(Ref* sender) { if (_cbVisibilityPrev) { _cbVisibilityNext(sender); recreate(); } }
     
+    void onAutoTest(Ref*);
+    
     void setHint() { if (_hintLabel) _hintLabel->setString(hint()); }
     
     void createTrigger(const std::string& hint, const Vec2& position, Label*& display, ccMenuCallback callback);
@@ -50,6 +88,9 @@ protected:
     virtual void setupTweakers();
     virtual void recreate() {};
     virtual std::string hint() const { return ""; }
+    
+    virtual void setupAutoTweakers() {};
+    void createAutoTweaker(const std::function<void (int)>& func, int min, int max);
     
 protected:
     ccMenuCallback _cbQuantityPrev;
@@ -64,6 +105,14 @@ protected:
     Label* _visibilityLabel;
     
     Label* _hintLabel;
+    
+    std::stack<AutoTweaker> _autoTweakers;
+    std::thread* _autoTestThread;
+    std::atomic<bool> _needRecreate;
+    std::atomic<bool> _autoTestRunning;
+    std::chrono::high_resolution_clock::time_point _lastTime;
+    
+    std::vector<FrameProfiler> _frameProfilers;
 };
 
 class ProfileTestScene : public TestScene

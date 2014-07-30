@@ -111,6 +111,38 @@ void ProfileMainLayer::onMouseScroll(Event *event)
     _CurrentPos = nextPos;
 }
 
+void FrameProfiler::reset()
+{
+    _totalFrames = 0;
+    _totalTime = 0;
+    _maxDuration = 0;
+    _minDuration = std::numeric_limits<long>::max();
+    _averageDuration = 0;
+}
+
+void FrameProfiler::sample(long dt)
+{
+    ++_totalFrames;
+    _totalTime += dt;
+    
+    if (dt > _maxDuration)
+    {
+        _maxDuration = dt;
+    }
+    
+    if (dt < _minDuration);
+    {
+        _minDuration = dt;
+    }
+    
+    _averageDuration = _totalTime / _totalFrames;
+}
+
+std::string FrameProfiler::getResult() const
+{
+    return StringUtils::format("Max: %ld, Min: %ld, Average: %ld", _maxDuration, _minDuration, _averageDuration);
+}
+
 void ProfileLayer::createTrigger(const std::string& hint, const cocos2d::Vec2& position, cocos2d::Label*& display, ccMenuCallback callback)
 {
     auto label = Label::createWithTTF(hint, "fonts/arial.ttf", 12);
@@ -149,6 +181,80 @@ void ProfileLayer::createTweaker(const std::string& labelText, const Vec2& posit
     display = displayText;
 }
 
+void ProfileLayer::createAutoTweaker(const std::function<void (int)>& func, int min, int max)
+{
+    _autoTweakers.push(AutoTweaker(func, min, max));
+}
+
+void ProfileLayer::doAutoTest()
+{
+    if (!_autoTweakers.empty())
+    {
+        auto tweaker = _autoTweakers.top();
+        _autoTweakers.pop();
+        for (int i = tweaker.min; i < tweaker.max; ++i)
+        {
+            tweaker.func(i);
+            doAutoTest();
+        }
+        _autoTweakers.push(tweaker);
+    }
+    else
+    {
+        _needRecreate = true;
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+    }
+}
+
+void ProfileLayer::onAutoTest(Ref*)
+{
+    if (_autoTestRunning) return;
+    if (_autoTestThread)
+    {
+        _autoTestThread->join();
+        CC_SAFE_DELETE(_autoTestThread);
+    }
+    
+    _autoTestThread = new std::thread([&]()
+    {
+        _autoTestRunning = true;
+        doAutoTest();
+        _autoTestRunning = false;
+        dumpAutoTest();
+    });
+    // delete later
+}
+
+void ProfileLayer::dumpAutoTest()
+{
+    for(auto& profiler : _frameProfilers)
+    {
+        CCLOG("==========================================================================");
+        CCLOG("%s", profiler.getDesc().c_str());
+        CCLOG("%s", profiler.getResult().c_str());
+        CCLOG("==========================================================================");
+    }
+}
+
+void ProfileLayer::updateProfiler(float dt)
+{
+    if (_needRecreate)
+    {
+        recreate();
+        _needRecreate = false;
+        _frameProfilers.push_back(FrameProfiler());
+        _frameProfilers.back().setDesc(getDescription());
+    }
+    
+    std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
+    if (_autoTestRunning)
+    {
+        long duration = static_cast<long>(std::chrono::duration_cast<std::chrono::milliseconds>(now - _lastTime).count());
+        _frameProfilers.back().sample(duration);
+    }
+    _lastTime = now;
+}
+
 void ProfileLayer::onEnter()
 {
     BaseTest::onEnter();
@@ -159,6 +265,28 @@ void ProfileLayer::onEnter()
     _hintLabel->setPosition(Director::getInstance()->getWinSize().width / 2, 100);
     _hintLabel->setColor(Color3B::GREEN);
     addChild(_hintLabel);
+    
+    // Auto test button
+    auto autoLabel = Label::createWithTTF("AutoTest", "fonts/arial.ttf", 16);
+    auto autoItem = MenuItemLabel::create(autoLabel, CC_CALLBACK_1(ProfileLayer::onAutoTest, this));
+    auto autoMenu = Menu::create(autoItem, nullptr);
+    addChild(autoMenu);
+    autoMenu->setPosition(Director::getInstance()->getWinSize().width / 2, 120);
+    
+    schedule(schedule_selector(ProfileLayer::updateProfiler));
+    _needRecreate = false;
+    _lastTime = std::chrono::high_resolution_clock::now();
+    _autoTestThread = nullptr;
+}
+
+void ProfileLayer::onExit()
+{
+    if (_autoTestThread)
+    {
+        _autoTestThread->join();
+        CC_SAFE_DELETE(_autoTestThread);
+    }
+    BaseTest::onExit();
 }
 
 void ProfileLayer::setupTweakers()

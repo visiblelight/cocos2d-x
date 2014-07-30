@@ -33,8 +33,8 @@ namespace ProfileParticleTestPolicy
     const std::string PositionPolicy[PositionPolicyCount] = {"All inside CCV", "Half inside CCV", "All outside CCV"};
     const int VisibilityPolicyCount = 3;
     const std::string VisibilityPolicy[VisibilityPolicyCount] = {"All Visible", "Half Visible", "All Invisible"};
-    const int NumberOfParticlesPolicyCount = 5;
-    const int NumberOfParticlesPolicy[NumberOfParticlesPolicyCount] = {200, 400, 800, 1600, 3200};
+    const int NumberOfParticlesPolicyCount = 7;
+    const int NumberOfParticlesPolicy[NumberOfParticlesPolicyCount] = {50, 200, 400, 800, 1600, 3200, 6400};
 }
 
 class ProfileParticleBasicTest : public ProfileParticleTest

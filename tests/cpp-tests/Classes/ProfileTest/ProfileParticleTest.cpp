@@ -69,7 +69,7 @@ void ProfileParticleBasicTest::onEnter()
     _quantityIndex = 0;
     _positionIndex = 0;
     _visibilityIndex = 0;
-    _nParticleIndex = ProfileParticleTestPolicy::NumberOfParticlesPolicyCount - 1;
+    _nParticleIndex = 0;//ProfileParticleTestPolicy::NumberOfParticlesPolicyCount - 1;
     
     recreate();
 }
