@@ -156,6 +156,10 @@ Classes/PerformanceTest/PerformanceContainerTest.cpp \
 Classes/PerformanceTest/PerformanceEventDispatcherTest.cpp \
 Classes/PerformanceTest/PerformanceScenarioTest.cpp \
 Classes/PerformanceTest/PerformanceCallbackTest.cpp \
+Classes/ProfileTest/ProfileTest.cpp \
+Classes/ProfileTest/ProfileNodeTest.cpp \
+Classes/ProfileTest/ProfileSpriteTest.cpp \
+Classes/ProfileTest/ProfileParticleTest.cpp \
 Classes/PhysicsTest/PhysicsTest.cpp \
 Classes/ReleasePoolTest/ReleasePoolTest.cpp \
 Classes/RenderTextureTest/RenderTextureTest.cpp \
