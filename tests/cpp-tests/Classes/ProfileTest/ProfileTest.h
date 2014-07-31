@@ -45,15 +45,19 @@ class FrameProfiler
     long _maxDuration;
     long _minDuration;
     long _averageDuration;
+    long _totalMemory;
+    long _maxMemory;
+    long _minMemory;
+    long _averageMemory;
     
     std::string _desc;
     
 public:
-    FrameProfiler():_totalFrames(0), _totalTime(0), _maxDuration(0), _minDuration(std::numeric_limits<long>::max()), _averageDuration(0)
+    FrameProfiler():_totalFrames(0), _totalTime(0), _maxDuration(0), _minDuration(std::numeric_limits<long>::max()), _averageDuration(0), _totalMemory(0), _maxMemory(0), _minMemory(std::numeric_limits<long>::max()), _averageMemory(0)
     {
     }
     void reset();
-    void sample(long dt);
+    void sample(long dt, long memory);
     std::string getResult() const;
     void setDesc(const std::string& desc) { _desc = desc; }
     std::string getDesc() const { return _desc; }
@@ -105,13 +109,13 @@ protected:
     Label* _visibilityLabel;
     
     Label* _hintLabel;
+    MenuItemLabel* _autoItem;
     
     std::stack<AutoTweaker> _autoTweakers;
     std::thread* _autoTestThread;
     std::atomic<bool> _needRecreate;
     std::atomic<bool> _autoTestRunning;
     std::chrono::high_resolution_clock::time_point _lastTime;
-    
     std::vector<FrameProfiler> _frameProfilers;
 };
 

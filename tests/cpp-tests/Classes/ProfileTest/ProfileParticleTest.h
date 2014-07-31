@@ -42,6 +42,7 @@ class ProfileParticleBasicTest : public ProfileParticleTest
 public:
     CREATE_FUNC(ProfileParticleBasicTest);
     void onEnter() override;
+    void setupAutoTweakers() override;
     
 protected:
     // not override
@@ -57,6 +58,7 @@ protected:
     
     void recreate() override;
     std::string hint() const override;
+    std::string getDescription() const override;
     
 protected:
     int _quantityIndex;

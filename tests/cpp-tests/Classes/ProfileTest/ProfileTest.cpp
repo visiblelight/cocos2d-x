@@ -64,27 +64,27 @@ bool ProfileMainLayer::onTouchBegan(Touch* touches, Event  *event)
 }
 void ProfileMainLayer::onTouchMoved(Touch* touches, Event  *event)
 {
-    auto touchLocation = touches->getLocation();
-    float nMoveY = touchLocation.y - _beginPos.y;
-    
-    auto curPos  = _itemMenu->getPosition();
-    auto nextPos = Vec2(curPos.x, curPos.y + nMoveY);
-    
-    if (nextPos.y < 0.0f)
-    {
-        _itemMenu->setPosition(Vec2::ZERO);
-        return;
-    }
-    
-    if (nextPos.y > ((g_testMax + 1)* LINE_SPACE - VisibleRect::getVisibleRect().size.height))
-    {
-        _itemMenu->setPosition(Vec2(0, ((g_testMax + 1)* LINE_SPACE - VisibleRect::getVisibleRect().size.height)));
-        return;
-    }
-    
-    _itemMenu->setPosition(nextPos);
-    _beginPos = touchLocation;
-    _CurrentPos = nextPos;
+//    auto touchLocation = touches->getLocation();
+//    float nMoveY = touchLocation.y - _beginPos.y;
+//    
+//    auto curPos  = _itemMenu->getPosition();
+//    auto nextPos = Vec2(curPos.x, curPos.y + nMoveY);
+//    
+//    if (nextPos.y < 0.0f)
+//    {
+//        _itemMenu->setPosition(Vec2::ZERO);
+//        return;
+//    }
+//    
+//    if (nextPos.y > ((g_testMax + 1)* LINE_SPACE - VisibleRect::getVisibleRect().size.height))
+//    {
+//        _itemMenu->setPosition(Vec2(0, ((g_testMax + 1)* LINE_SPACE - VisibleRect::getVisibleRect().size.height)));
+//        return;
+//    }
+//    
+//    _itemMenu->setPosition(nextPos);
+//    _beginPos = touchLocation;
+//    _CurrentPos = nextPos;
 }
 
 void ProfileMainLayer::onMouseScroll(Event *event)
@@ -118,12 +118,17 @@ void FrameProfiler::reset()
     _maxDuration = 0;
     _minDuration = std::numeric_limits<long>::max();
     _averageDuration = 0;
+    _totalMemory = 0;
+    _maxMemory = 0;
+    _minMemory = std::numeric_limits<long>::max();
+    _averageMemory = 0;
 }
 
-void FrameProfiler::sample(long dt)
+void FrameProfiler::sample(long dt, long memory)
 {
     ++_totalFrames;
     _totalTime += dt;
+    _totalMemory += memory;
     
     if (dt > _maxDuration)
     {
@@ -136,11 +141,24 @@ void FrameProfiler::sample(long dt)
     }
     
     _averageDuration = _totalTime / _totalFrames;
+    
+    if (memory > _maxMemory)
+    {
+        _maxMemory = memory;
+    }
+    
+    if (memory < _minMemory)
+    {
+        _minMemory = memory;
+    }
+    
+    _averageMemory = _totalMemory / _totalFrames;
 }
 
 std::string FrameProfiler::getResult() const
 {
-    return StringUtils::format("Max: %ld, Min: %ld, Average: %ld", _maxDuration, _minDuration, _averageDuration);
+    return StringUtils::format("Time{Max: %ld, Min: %ld, Average: %ld}|Memory{Max: %ld, Min: %ld, Average: %ld}",
+                               _maxDuration, _minDuration, _averageDuration, _maxMemory, _minMemory, _averageMemory);
 }
 
 void ProfileLayer::createTrigger(const std::string& hint, const cocos2d::Vec2& position, cocos2d::Label*& display, ccMenuCallback callback)
@@ -206,7 +224,7 @@ void ProfileLayer::doAutoTest()
     }
 }
 
-void ProfileLayer::onAutoTest(Ref*)
+void ProfileLayer::onAutoTest(Ref* sender)
 {
     if (_autoTestRunning) return;
     if (_autoTestThread)
@@ -221,13 +239,14 @@ void ProfileLayer::onAutoTest(Ref*)
         doAutoTest();
         _autoTestRunning = false;
         dumpAutoTest();
+        _autoItem->setString("AutoTest");
     });
     // delete later
 }
 
 void ProfileLayer::dumpAutoTest()
 {
-    for(auto& profiler : _frameProfilers)
+    for(const auto& profiler : _frameProfilers)
     {
         CCLOG("==========================================================================");
         CCLOG("%s", profiler.getDesc().c_str());
@@ -244,13 +263,14 @@ void ProfileLayer::updateProfiler(float dt)
         _needRecreate = false;
         _frameProfilers.push_back(FrameProfiler());
         _frameProfilers.back().setDesc(getDescription());
+        if (_autoTestRunning) _autoItem->setString("AutoTesting...");
     }
     
     std::chrono::high_resolution_clock::time_point now = std::chrono::high_resolution_clock::now();
     if (_autoTestRunning)
     {
         long duration = static_cast<long>(std::chrono::duration_cast<std::chrono::milliseconds>(now - _lastTime).count());
-        _frameProfilers.back().sample(duration);
+        _frameProfilers.back().sample(duration, Device::getUsedMemory() / 1024);
     }
     _lastTime = now;
 }
@@ -272,6 +292,7 @@ void ProfileLayer::onEnter()
     auto autoMenu = Menu::create(autoItem, nullptr);
     addChild(autoMenu);
     autoMenu->setPosition(Director::getInstance()->getWinSize().width / 2, 120);
+    _autoItem = autoItem;
     
     schedule(schedule_selector(ProfileLayer::updateProfiler));
     _needRecreate = false;

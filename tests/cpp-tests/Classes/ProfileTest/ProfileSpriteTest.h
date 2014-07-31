@@ -83,8 +83,6 @@ public:
     CREATE_FUNC(ProfileSpriteOperationTest);
     
 protected:
-    void update(float dt) override;
-    //void recreate() override;
     std::string hint() const override;
 };
 
@@ -92,6 +90,7 @@ class ProfileSpriteActionTest : public ProfileSpriteBasicTest
 {
 public:
     CREATE_FUNC(ProfileSpriteActionTest);
+    std::string getDescription() const override;
     
 protected:
     std::string hint() const override;

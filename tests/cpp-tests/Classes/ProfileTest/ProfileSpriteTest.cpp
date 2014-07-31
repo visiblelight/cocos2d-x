@@ -288,10 +288,6 @@ std::string ProfileSpriteOperationTest::hint() const
     return "Profile sprite add/remove children.";
 }
 
-void ProfileSpriteOperationTest::update(float dt)
-{
-}
-
 std::string ProfileSpriteActionTest::hint() const
 {
     return "Profile sprite actions.";
@@ -432,10 +428,15 @@ Action* ProfileSpriteActionTest::getOneAction() const
 
 void ProfileSpriteActionTest::setupAutoTweakers()
 {
-    createAutoTweaker([&](int index){ _quantityIndex = index; }, 0, ProfileSpriteTestPolicy::QuantityPolicyCount - 3);
-    // disable the huge texture size test temporarily!!!!!!!
-    createAutoTweaker([&](int index){ _textureSizeIndex = index; }, 0, ProfileSpriteTestPolicy::TextureSizePolicyCount - 3);
+    createAutoTweaker([&](int index){ _quantityIndex = index; }, 0, ProfileSpriteTestPolicy::QuantityPolicyCount);
+    createAutoTweaker([&](int index){ _textureSizeIndex = index; }, 0, ProfileSpriteTestPolicy::TextureSizePolicyCount);
     createAutoTweaker([&](int index){ _actionIndex = index; }, 0, ProfileSpriteTestPolicy::ActionPolicyCount);
+}
+
+std::string ProfileSpriteActionTest::getDescription() const
+{
+    return StringUtils::format("[Quantity: %d]|[Position: %s]|[Visibility: %s]|[TextureSize: %s]|[PixelFormat:%s][Action:%s]",
+                               ProfileSpriteTestPolicy::Quantities[_quantityIndex], ProfileSpriteTestPolicy::PositionPolicy[_positionIndex].c_str(), ProfileSpriteTestPolicy::VisibilityPolicy[_visibilityIndex].c_str(), ProfileSpriteTestPolicy::TextureSizePolicy[_textureSizeIndex].c_str(), ProfileSpriteTestPolicy::TexturePixelFormatPolicy[_texturePixelFormatIndex].c_str(), ProfileSpriteTestPolicy::ActionPolicy[_actionIndex].c_str());
 }
 
 void ProfileSpriteActionTest::onActionPrev(Ref*)

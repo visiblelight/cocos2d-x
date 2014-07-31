@@ -69,9 +69,18 @@ void ProfileParticleBasicTest::onEnter()
     _quantityIndex = 0;
     _positionIndex = 0;
     _visibilityIndex = 0;
-    _nParticleIndex = 0;//ProfileParticleTestPolicy::NumberOfParticlesPolicyCount - 1;
+    _nParticleIndex = ProfileParticleTestPolicy::NumberOfParticlesPolicyCount - 1;
+    
+    setupAutoTweakers();
     
     recreate();
+}
+
+void ProfileParticleBasicTest::setupAutoTweakers()
+{
+    // auto test
+    createAutoTweaker([&](int index){ _quantityIndex = index; }, 0, ProfileParticleTestPolicy::QuantityPolicyCount);
+    createAutoTweaker([&](int index){ _nParticleIndex = index; }, 0, ProfileParticleTestPolicy::NumberOfParticlesPolicyCount);
 }
 
 void ProfileParticleBasicTest::recreate()
@@ -85,7 +94,7 @@ void ProfileParticleBasicTest::recreate()
     {
         //auto node = Node::create();
         auto node = ParticleSystemQuad::createWithTotalParticles(ProfileParticleTestPolicy::NumberOfParticlesPolicy[_nParticleIndex]);
-        node->setTexture(Director::getInstance()->getTextureCache()->addImage("Images/fire.png"));
+        node->setTexture(Director::getInstance()->getTextureCache()->addImage("Images/background.png"));
         //auto node = ParticleSystemQuad::create("Particles/Spiral.plist");;
         addChild(node, 0, i);
         
@@ -267,5 +276,11 @@ void ProfileParticleBasicTest::toggleNofParticles()
         static_cast<ParticleSystemQuad*>(node)->setTotalParticles(ProfileParticleTestPolicy::NumberOfParticlesPolicy[_nParticleIndex]);
     }
     _nParticleLabel->setString(StringUtils::format("%d", ProfileParticleTestPolicy::NumberOfParticlesPolicy[_nParticleIndex]));
+}
+
+std::string ProfileParticleBasicTest::getDescription() const
+{
+    return StringUtils::format("[Quantity: %d]|[Position: %s]|[Visibility: %s]|[NParticles:%d]",
+                               ProfileParticleTestPolicy::Quantities[_quantityIndex], ProfileParticleTestPolicy::PositionPolicy[_positionIndex].c_str(), ProfileParticleTestPolicy::VisibilityPolicy[_visibilityIndex].c_str(), ProfileParticleTestPolicy::NumberOfParticlesPolicy[_nParticleIndex]);
 }
 
