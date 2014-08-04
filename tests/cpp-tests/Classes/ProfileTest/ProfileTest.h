@@ -53,7 +53,7 @@ class FrameProfiler
     std::string _desc;
     
 public:
-    FrameProfiler():_totalFrames(0), _totalTime(0), _maxDuration(0), _minDuration(std::numeric_limits<long>::max()), _averageDuration(0), _totalMemory(0), _maxMemory(0), _minMemory(std::numeric_limits<long>::max()), _averageMemory(0)
+    FrameProfiler():_totalFrames(-1), _totalTime(0), _maxDuration(0), _minDuration(std::numeric_limits<long>::max()), _averageDuration(0), _totalMemory(0), _maxMemory(0), _minMemory(std::numeric_limits<long>::max()), _averageMemory(0)
     {
     }
     void reset();

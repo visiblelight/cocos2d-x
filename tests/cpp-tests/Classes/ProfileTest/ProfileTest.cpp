@@ -101,7 +101,7 @@ void ProfileMainLayer::onMouseScroll(Event *event)
         return;
     }
     
-    if (nextPos.y > ((g_testMax + 1)* LINE_SPACE - VisibleRect::getVisibleRect().size.height))
+    if (nextPos.y > ((g_testMax + 1) * LINE_SPACE - VisibleRect::getVisibleRect().size.height))
     {
         _itemMenu->setPosition(Vec2(0, ((g_testMax + 1)* LINE_SPACE - VisibleRect::getVisibleRect().size.height)));
         return;
@@ -113,7 +113,7 @@ void ProfileMainLayer::onMouseScroll(Event *event)
 
 void FrameProfiler::reset()
 {
-    _totalFrames = 0;
+    _totalFrames = -1;
     _totalTime = 0;
     _maxDuration = 0;
     _minDuration = std::numeric_limits<long>::max();
@@ -126,7 +126,9 @@ void FrameProfiler::reset()
 
 void FrameProfiler::sample(long dt, long memory)
 {
-    ++_totalFrames;
+    // skip the first frame
+    if (++_totalFrames == 0) return;
+    
     _totalTime += dt;
     _totalMemory += memory;
     
@@ -135,7 +137,7 @@ void FrameProfiler::sample(long dt, long memory)
         _maxDuration = dt;
     }
     
-    if (dt < _minDuration);
+    if (dt < _minDuration)
     {
         _minDuration = dt;
     }
@@ -157,8 +159,8 @@ void FrameProfiler::sample(long dt, long memory)
 
 std::string FrameProfiler::getResult() const
 {
-    return StringUtils::format("Time{Max: %ld, Min: %ld, Average: %ld}|Memory{Max: %ld, Min: %ld, Average: %ld}",
-                               _maxDuration, _minDuration, _averageDuration, _maxMemory, _minMemory, _averageMemory);
+    return StringUtils::format("TotalFrames{%ld}|TotalTime{%ld}|Time{Max: %ld, Min: %ld, Average: %ld}|Memory{Max: %ld, Min: %ld, Average: %ld}",
+                               _totalFrames, _totalTime, _maxDuration, _minDuration, _averageDuration, _maxMemory, _minMemory, _averageMemory);
 }
 
 void ProfileLayer::createTrigger(const std::string& hint, const cocos2d::Vec2& position, cocos2d::Label*& display, ccMenuCallback callback)
@@ -220,7 +222,7 @@ void ProfileLayer::doAutoTest()
     else
     {
         _needRecreate = true;
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(15));
     }
 }
 

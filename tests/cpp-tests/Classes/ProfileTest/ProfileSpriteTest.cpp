@@ -124,6 +124,7 @@ void ProfileSpriteBasicTest::setupAutoTweakers()
 {
     // auto test
     createAutoTweaker([&](int index){ _quantityIndex = index; }, 0, ProfileSpriteTestPolicy::QuantityPolicyCount);
+    createAutoTweaker([&](int index){ _positionIndex = index; }, 0, ProfileSpriteTestPolicy::PositionPolicyCount);
     createAutoTweaker([&](int index){ _textureSizeIndex = index; }, 0, ProfileSpriteTestPolicy::TextureSizePolicyCount);
 }
 
